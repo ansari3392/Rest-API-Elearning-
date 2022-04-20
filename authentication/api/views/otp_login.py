@@ -1,17 +1,17 @@
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
-from authentication.api.serializers.otp_login import OTPLoginSerializer
+from authentication.api.serializers.login import LoginSerializer
 
 User = get_user_model()
 
 
 class SendOTPLoginAPIView(APIView):
-    serializer_class = OTPLoginSerializer
+    serializer_class = LoginSerializer
     permission_classes = (AllowAny,)
 
     def post(self, *args, **kwargs):
-        serializer = OTPLoginSerializer(data=self.request.data)
+        serializer = LoginSerializer(data=self.request.data)
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data.get('email')
         phone_number = serializer.validated_data.get('phone_number')
