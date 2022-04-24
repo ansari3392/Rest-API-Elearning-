@@ -38,6 +38,7 @@ class PasswordLogin(APIView):
                 data = {
                     'status': status.HTTP_400_BAD_REQUEST
                 }
+            return Response(data)
 
         else:
             user = authenticate(username=phone_number, password=password)
@@ -55,6 +56,4 @@ class PasswordLogin(APIView):
                 data = {
                     'status': HTTP_400_BAD_REQUEST
                 }
-
-            return Response(data=data, )
-
+            return Response(data)

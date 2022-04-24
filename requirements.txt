@@ -4,11 +4,15 @@ certifi==2021.10.8
 distlib==0.3.4
 Django==4.0.4
 django-filter==21.1
+django-js-asset==2.0.0
+django-mptt==0.13.4
 djangorestframework==3.13.1
 djangorestframework-simplejwt==5.1.0
 filelock==3.4.0
+Pillow==9.1.0
 pipenv==2021.11.23
 platformdirs==2.4.0
+psycopg2-binary==2.9.3
 PyJWT==2.3.0
 pytz==2022.1
 six==1.16.0
@@ -16,3 +20,4 @@ sqlparse==0.4.2
 tzdata==2022.1
 virtualenv==20.10.0
 virtualenv-clone==0.5.7
+redis

@@ -46,7 +46,7 @@ class Profile(SkuMixin, TimeStampModelMixin):
         verbose_name_plural = 'Profiles'
 
     def __str__(self):
-        return self.user.username
+        return self.user.__str__()
 
     def save(self, *args, **kwargs):
         if not self.sku:

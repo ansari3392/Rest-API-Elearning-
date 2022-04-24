@@ -1,39 +1,58 @@
 from django.contrib.auth import get_user_model
-from rest_framework.serializers import ModelSerializer
+from django.core.validators import MaxValueValidator, MinValueValidator
 from rest_framework import serializers
-from django.contrib.auth.password_validation import validate_password
 
 User = get_user_model()
-class RegisterSerializer(ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
-    password2 = serializers.CharField(write_only=True, required=True)
 
-    class Meta:
-        model = User
-        fields = [
-            'phone_number',
-            'username',
-            'email',
-            'password',
-            'password2',
-        ]
 
-    extra_kwargs = {
-        'email': {'required': True},
-    }
+class RegisterSerializer(serializers.Serializer):
+    phone_number = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True
+    )
+    email = serializers.EmailField(
+        required=False,
+        allow_blank=True,
+        allow_null=True
+    )
 
-    def validate(self, attrs):
-        if attrs['password'] != attrs['password2']:
-            raise serializers.ValidationError({"password": "Password fields didn't match."})
+    def validate(self, attrs: dict) -> dict:
+        email = attrs.get('email')
+        phone = attrs.get('phone_number')
+        if all([email, phone]):
+            raise serializers.ValidationError('you cant send both email and phone number')
+        if not any([email, phone]):
+            raise serializers.ValidationError('you should send email or phone number')
         return attrs
 
-    def create(self, validated_data):
-        user = User.objects.create_user(
-            validated_data['username'],
-            validated_data['email'],
-            validated_data['password'])
-        user.save()
-        return user
+
+class UserOTPSerializer(serializers.Serializer):
+    phone_number = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True
+    )
+    email = serializers.EmailField(
+        required=False,
+        allow_blank=True,
+        allow_null=True
+    )
+
+    otp = serializers.IntegerField(
+        required=True,
+        allow_null=False,
+            )
+
+    def validate(self, attrs: dict) -> dict:
+        email = attrs.get('email')
+        phone = attrs.get('phone_number')
+        if all([email, phone]):
+            raise serializers.ValidationError('kire khar')
+        if not any([email, phone]):
+            raise serializers.ValidationError('kire asb')
+        return attrs
+
 
 
 

@@ -2,6 +2,7 @@ from pathlib import Path
 from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
@@ -169,8 +170,33 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
+
+# EMAIL_BACKEND = smtp.gmail.com
+# EMAIL_HOST_USER = '<Gmail Id>'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_PASSWORD = "<Password>"
+
+OTP_SETTINGS = {
+    'MAX_OTP': 5,
+    'CLIENT': "",
+    'API_KEY': "",
+    'SENDER_ID': "",
+    'TEMPLATE_NAME': ""
+}
 # OTP with Redis
 OTP_REDIS_HOST = 'localhost'
 OTP_REDIS_PORT = '6379'
 OTP_REDIS_NAME = '0'
-OTP_TOKEN_EXPIRE_TIME = '120'
+OTP_EXPIRY_SECONDS = 500
+
+CACHES = {
+    "default": {
+        "BACKEND": 'django_redis.cache.RedisCache',
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
