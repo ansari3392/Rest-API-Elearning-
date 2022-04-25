@@ -13,7 +13,7 @@ User = get_user_model()
 
 class CartTest(APITestCase):
     def setUp(self):
-        self.user = create_user('mahtab', 'mahtab@gmail.com')
+        self.user = create_user('09224282993')
         refresh = RefreshToken.for_user(user=self.user)
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
         cat = Category.objects.create(title="programming")
@@ -39,7 +39,6 @@ class CartTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         order_items_count = self.cart.orderitems.count()
         self.assertEqual(order_items_count, 1)
-
 
     def test_add_to_cart_by_non_owner(self):
         pass

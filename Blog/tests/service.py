@@ -1,23 +1,17 @@
 from django.contrib.auth import get_user_model
-from rest_framework.reverse import reverse
-
 
 User = get_user_model()
 
-def create_user(username, email):
+def create_user(phone_number):
     return User.objects.create(
-        username=username,
-        email=email,
-        password='somepassword'
+       phone_number=phone_number,
+       is_verified=True
     )
 
-def create_admin(username, email):
+def create_admin(phone_number):
     return User.objects.create(
-        username=username,
-        email=email,
-        password='somepassword',
+        phone_number=phone_number,
         is_staff=True,
-        is_superuser=True
+        is_superuser=True,
+        is_verified=True
     )
-
-

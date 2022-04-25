@@ -17,10 +17,10 @@ User = get_user_model()
 class CourseEpisodeTest(APITestCase):
 
     def setUp(self):
-        self.user = create_admin('fati', 'fati3392@gmail.com')
+        self.user = create_admin('09224282995')
         refresh = RefreshToken.for_user(user=self.user)
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
-        self.user2 = User.objects.create_user("mahtab", "mahtab@gmail.com")
+        self.user2 = User.objects.create_user('09224282996')
         Profile.objects.filter(user=self.user2).update(is_teacher=True)
         self.cat1 = Category.objects.create(title="programming")
         self.tag1 = Tag.objects.create(name="coding")

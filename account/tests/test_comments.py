@@ -11,8 +11,8 @@ User = get_user_model()
 
 class CommentViewTestCase(APITestCase):
     def setUp(self):
-        self.user1 = create_user('mahtab', 'mahtab@gmail.com')
-        self.user2 = create_user('mahtab2', 'mahtab2@gmail.com')
+        self.user1 = create_user('09224282991')
+        self.user2 = create_user('09224282992')
         refresh2 = RefreshToken.for_user(user=self.user2)
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh2.access_token}')
         self.article1 = Article.objects.create(title='test', description='testtttt', author=self.user1, is_published=True)

@@ -33,7 +33,7 @@ class Article(SkuMixin, TimeStampModelMixin):
     tags = models.ManyToManyField(
         Tag,
         related_name='article_tags',
-        blank=True
+        blank=True,
     )
 
     class Meta:

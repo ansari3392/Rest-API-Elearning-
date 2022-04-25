@@ -1,22 +1,18 @@
-from django.db import transaction
-from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from rest_framework.response import Response
+from rest_framework import serializers
 
 from Blog.models.article import Article
-from cms.api.serializers.tag import TagSerializer
-from cms.models import Tag
 
 User = get_user_model()
 
 class ArticleSerializer(serializers.ModelSerializer):
-    tags = serializers.SlugRelatedField(
-        many=True,
-        slug_field='name',
-        queryset=Tag.objects.all()
-     )
-
+    tag_list = serializers.ListField(required=False, write_only=True)
+    tags = serializers.SerializerMethodField()
     author = serializers.SerializerMethodField()
+
+    @staticmethod
+    def get_tags(obj):
+        return obj.tags.values_list('name', flat=True)
 
     @staticmethod
     def get_author(article):
@@ -37,6 +33,7 @@ class ArticleSerializer(serializers.ModelSerializer):
             # 'category',
             'viewed',
             'tags',
+            'tag_list'
         )
         read_only_fields = (
             'sku',
@@ -44,5 +41,7 @@ class ArticleSerializer(serializers.ModelSerializer):
             'is_published',
             'viewed',
         )
+
+
 
 

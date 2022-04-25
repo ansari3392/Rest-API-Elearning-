@@ -15,7 +15,7 @@ class CourseView(ModelViewSet):
         return [IsAdminUser()]
 
     def get_queryset(self):
-        queryset = Course.objects.all()
+        queryset = Course.objects.all().prefetch_related('episodes')
         return queryset
 
     def get_serializer_class(self):

@@ -52,7 +52,7 @@ class CourseSerializer(ModelSerializer):
 
 class CreateCourseSerializer(ModelSerializer):
     teacher = serializers.SlugRelatedField(
-        slug_field='username',
+        slug_field='first_name',
         queryset=User.objects.filter(profile__is_teacher=True)
     )
     tag_list = serializers.ListField(required=False, write_only=True)

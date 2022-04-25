@@ -1,23 +1,22 @@
+from django.contrib.auth import get_user_model
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from django.urls import reverse
-from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
-
 from account.models import Profile
 from categories.models import Category
 from cms.models import Tag
 from course.models import Course
-from course.tests.service import create_user, create_admin
+from course.tests.service import create_admin, create_teacher
 
 User = get_user_model()
 
 class CourseTest(APITestCase):
     def setUp(self):
-        self.user = create_admin('fati', 'fati3392@gmail.com')
+        self.user = create_admin('09224282994')
         refresh = RefreshToken.for_user(user=self.user)
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
-        self.user2 = User.objects.create_user("mahtab", "mahtab@gmail.com")
+        self.user2 = create_teacher("09224282995", 'mahtab')
         Profile.objects.filter(user=self.user2).update(is_teacher=True)
         self.cat1 = Category.objects.create(title="programming")
         self.tag1 = Tag.objects.create(name="coding")

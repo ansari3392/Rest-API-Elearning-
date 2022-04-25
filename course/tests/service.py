@@ -4,20 +4,26 @@ from rest_framework.reverse import reverse
 
 User = get_user_model()
 
-def create_user(username, email):
+def create_user(phone_number):
     return User.objects.create(
-        username=username,
-        email=email,
-        password='somepassword'
+       phone_number=phone_number,
+       is_verified=True
     )
 
-def create_admin(username, email):
+def create_admin(phone_number):
     return User.objects.create(
-        username=username,
-        email=email,
-        password='somepassword',
+        phone_number=phone_number,
         is_staff=True,
+        is_superuser=True,
+        is_verified=True
+    )
 
+
+def create_teacher(phone_number, name):
+    return User.objects.create(
+       phone_number=phone_number,
+       is_verified=True,
+       first_name=name
     )
 
 def reverse_querystring(url, query_kwargs=None):

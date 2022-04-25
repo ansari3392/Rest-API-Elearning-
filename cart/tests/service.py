@@ -5,11 +5,11 @@ from course.models import Course
 
 User = get_user_model()
 
-def create_user(username, email):
+
+def create_user(phone_number):
     return User.objects.create(
-        username=username,
-        email=email,
-        password='somepassword'
+       phone_number=phone_number,
+       is_verified=True
     )
 
 

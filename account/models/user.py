@@ -54,6 +54,9 @@ class CustomUser(SkuMixin, AbstractUser):
     objects = CustomUserManager()
 
     def __str__(self):
+        return self.first_name
+
+    def get_user(self):
         return str(self.phone_number) if self.phone_number else str(self.email)
 
     def save(self, *args, **kwargs):

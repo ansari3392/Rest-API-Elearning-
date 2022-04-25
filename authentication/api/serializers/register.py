@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.core.validators import MaxValueValidator, MinValueValidator
 from rest_framework import serializers
 
 User = get_user_model()
@@ -48,9 +47,9 @@ class UserOTPSerializer(serializers.Serializer):
         email = attrs.get('email')
         phone = attrs.get('phone_number')
         if all([email, phone]):
-            raise serializers.ValidationError('kire khar')
+            raise serializers.ValidationError('you should send email or phone')
         if not any([email, phone]):
-            raise serializers.ValidationError('kire asb')
+            raise serializers.ValidationError('you should send email or phone')
         return attrs
 
 
