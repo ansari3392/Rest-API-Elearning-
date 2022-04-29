@@ -1,5 +1,3 @@
-from typing import List
-
 from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import ModelViewSet
 

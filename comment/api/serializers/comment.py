@@ -1,15 +1,16 @@
 from rest_framework import serializers
-from rest_framework.serializers import SlugRelatedField, SerializerMethodField
+
+from Blog.models import Article
 from comment.models.comment import Comment
-from Blog.models.article import Article
+
 
 class CommentSerializer(serializers.ModelSerializer):
-    article = SlugRelatedField(
+    article = serializers.SlugRelatedField(
         queryset=Article.objects.all(),
-        slug_field='sku'
+        slug_field='sku',
     )
-
     author = serializers.SerializerMethodField()
+
 
     @staticmethod
     def get_author(comment):
@@ -30,5 +31,13 @@ class CommentSerializer(serializers.ModelSerializer):
         read_only_fields = [
             'id',
             'sku',
-            'is_active'
+            'is_active',
+
         ]
+
+
+
+
+
+
+

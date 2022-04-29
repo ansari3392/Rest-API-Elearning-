@@ -1,12 +1,11 @@
-from django.shortcuts import get_object_or_404
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListAPIView, UpdateAPIView, DestroyAPIView
+from rest_framework.permissions import IsAuthenticated
+
+from comment.api.serializers.comment import CommentSerializer
 from comment.models.comment import Comment
 
-from account.api.serializers.comment import CommentSerializer, UpdateCommentSerializer
 
-
-class CommentView(ListAPIView):
+class MyCommentView(ListAPIView):
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated]
 
@@ -14,9 +13,8 @@ class CommentView(ListAPIView):
         queryset = Comment.objects.filter(author=self.request.user)
         return queryset
 
-
 class UpdateCommentView(UpdateAPIView):
-    serializer_class = UpdateCommentSerializer
+    serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):

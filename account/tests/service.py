@@ -11,6 +11,14 @@ def create_user(phone_number, name):
        first_name=name
     )
 
+def create_admin(phone_number):
+    return User.objects.create(
+        phone_number=phone_number,
+        is_staff=True,
+        is_superuser=True,
+        is_verified=True
+    )
+
 def reverse_querystring(url, query_kwargs=None):
     """ reverse('appname:api:name',  query_kwargs={'search': 'Bob'}) """
     base_url = reverse(url)
