@@ -1,15 +1,15 @@
+from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from django.urls import reverse
-from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from account.models import Profile
 from categories.models import Category
 from cms.models import Tag
 from course.models import Course, CourseEpisode
-from course.tests.service import create_user, create_admin, reverse_querystring
-from django.core.files.uploadedfile import SimpleUploadedFile
+from course.tests.service import create_admin, reverse_querystring
 
 User = get_user_model()
 
@@ -67,6 +67,7 @@ class CourseEpisodeTest(APITestCase):
         course_episode: CourseEpisode = CourseEpisode.objects.create(course=self.course, number=1,
                                                                      title="introduction", duration="02:05:01",
                                                                      video=file)
+
         url = reverse('course:api:course-episode-detail', kwargs={'pk': course_episode.pk})
         data = {
             "title": "introduction1"
@@ -114,7 +115,8 @@ class CourseEpisodeTest(APITestCase):
         response = self.client.delete(url, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_get_all_course_episodes_of_a_course(self):
+    def test_get_list_episodes_of_a_course_by_user_without_query_param_fail(self):
+        self.client.logout()
         with open('course/tests/files/sample.mp4', 'rb') as f:
             file = SimpleUploadedFile('Name of the django file', f.read())
         course_episode1: CourseEpisode = CourseEpisode.objects.create(course=self.course, number=1,
@@ -123,11 +125,42 @@ class CourseEpisodeTest(APITestCase):
         course_episode2: CourseEpisode = CourseEpisode.objects.create(course=self.course, number=2,
                                                                       title="introduction2", duration="02:05:01",
                                                                       video=file)
-        url = reverse_querystring('course:api:course-episode-list', query_kwargs={'course_sku': self.course.sku})
+        url = reverse('course:api:episodes_list')
+        response = self.client.get(url, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_get_list_episodes_of_a_course_by_user_success(self):
+        self.client.logout()
+        with open('course/tests/files/sample.mp4', 'rb') as f:
+            file = SimpleUploadedFile('Name of the django file', f.read())
+        course_episode1: CourseEpisode = CourseEpisode.objects.create(course=self.course, number=1,
+                                                                      title="introduction", duration="02:05:01",
+                                                                      video=file)
+        course_episode2: CourseEpisode = CourseEpisode.objects.create(course=self.course, number=2,
+                                                                      title="introduction2", duration="02:05:01",
+                                                                      video=file)
+        url = reverse_querystring('course:api:episodes_list', query_kwargs={'course_sku': self.course.sku})
         response = self.client.get(url, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         course_episode_count = CourseEpisode.objects.filter(course=self.course).count()
         self.assertEqual(response.data.get('count'), course_episode_count)
+
+    def test_get_list_episodes_of_a_course_by_admin_success(self):
+        with open('course/tests/files/sample.mp4', 'rb') as f:
+            file = SimpleUploadedFile('Name of the django file', f.read())
+        course_episode1: CourseEpisode = CourseEpisode.objects.create(course=self.course, number=1,
+                                                                      title="introduction", duration="02:05:01",
+                                                                      video=file)
+        course_episode2: CourseEpisode = CourseEpisode.objects.create(course=self.course, number=2,
+                                                                      title="introduction2", duration="02:05:01",
+                                                                      video=file)
+        url = reverse_querystring('course:api:episodes_list', query_kwargs={'course_sku': self.course.sku})
+        response = self.client.get(url, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        course_episode_count = CourseEpisode.objects.count()
+        self.assertEqual(response.data.get('count'), course_episode_count)
+
+
 
 
 
