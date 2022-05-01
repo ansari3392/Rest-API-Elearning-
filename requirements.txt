@@ -15,6 +15,7 @@ coverage==6.3.2
 Deprecated==1.2.13
 distlib==0.3.4
 Django==4.0.4
+django-environ==0.8.1
 django-filter==21.1
 django-js-asset==2.0.0
 django-mptt==0.13.4
