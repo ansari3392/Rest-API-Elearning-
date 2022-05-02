@@ -12,8 +12,8 @@ class TestUserCreationSignal(APITestCase):
 
     def test_profile_creation_after_registration(self):
         user = User.objects.create_user(
-            username='Eliiiii',
-            password='1234789'
+           phone_number='09224282991',
+           is_verified=True
         )
-        self.assertEqual(Profile.objects.count(user=user), 1)
+        self.assertEqual(Profile.objects.count(), 1)
         self.assertEqual(Profile.objects.first().user, user)
