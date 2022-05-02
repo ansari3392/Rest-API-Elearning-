@@ -11,6 +11,7 @@ from course.tests.service import create_admin, create_teacher
 
 User = get_user_model()
 
+
 class CourseTest(APITestCase):
     def setUp(self):
         self.user = create_admin('09224282994')
@@ -103,7 +104,7 @@ class CourseTest(APITestCase):
         course2: Course = Course.objects.create(title="testing2", description="testing again", teacher=self.user2,
                                                 category=self.cat1, )
         course1.tags.set([self.tag2, self.tag1])
-        url = reverse('course:api:course-list',)
+        url = reverse('course:api:course-list', )
         response = self.client.get(url)
         course_count = Course.objects.all().count()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -112,11 +113,3 @@ class CourseTest(APITestCase):
         self.assertIn('sku', course)
         self.assertEqual(course.get('title'), 'testing2')
         self.assertEqual(course.get('teacher'), self.user2.id)
-
-
-
-
-
-
-
-
