@@ -29,6 +29,7 @@ class CartTest(APITestCase):
         url = reverse('cart:api:cart')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get('step'), 'initial')
 
     def test_add_to_cart_by_owner(self):
         url = reverse('cart:api:add_or_remove_from_cart')

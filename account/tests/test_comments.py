@@ -115,6 +115,8 @@ class CommentViewTestCase(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get('count'), 1)
+        comment = response.data.get('results')[0]
+        self.assertEqual(comment.get('description'), 'like')
 
     def test_get_all_active_comment_of_an_article_by_user_success(self):
         self.client.logout()
@@ -123,6 +125,9 @@ class CommentViewTestCase(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get('count'), 1)
+        self.assertEqual(response.data.get('count'), 1)
+        comment = response.data.get('results')[0]
+        self.assertEqual(comment.get('description'), 'like')
 
     def test_get_all_inactive_comment_of_an_article_by_user_fail(self):
         self.client.logout()
@@ -145,4 +150,6 @@ class CommentViewTestCase(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get('count'), 2)
+        comment = response.data.get('results')[0]
+        self.assertEqual(comment.get('description'), 'likee')
 

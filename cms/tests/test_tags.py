@@ -96,6 +96,8 @@ class TagTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         tags_count = Tag.objects.all().count()
         self.assertEqual(response.data.get('count'), tags_count)
+        tag0 = response.data.get('results')[0]
+        self.assertEqual(tag0.get('name'), 'test1')
 
     def test_get_tag_detail(self):
         self.client.logout()
@@ -103,3 +105,4 @@ class TagTest(APITestCase):
         url = reverse('cms:api:tag-detail', kwargs={'pk': tag.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get('name'), 'test3')

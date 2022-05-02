@@ -80,6 +80,9 @@ class ArticleTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         article_count = Article.objects.all().count()
         self.assertEqual(response.data.get('count'), article_count)
+        article = response.data.get('results')[0]
+        self.assertEqual(article.get('title'), 'test')
+        self.assertTrue(article.get('is_published'), True)
 
     def test_get_articles_detail(self):
         self.client.logout()
@@ -87,6 +90,7 @@ class ArticleTest(APITestCase):
         url = reverse('blog:api:article-detail', kwargs={'pk': article.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get('title'), 'test')
 
     def test_can_delete_article_by_author(self):
         article = Article.objects.create(title='test', description='test again', is_published=True, author=self.user)

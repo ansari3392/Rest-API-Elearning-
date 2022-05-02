@@ -144,6 +144,9 @@ class CourseEpisodeTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         course_episode_count = CourseEpisode.objects.filter(course=self.course).count()
         self.assertEqual(response.data.get('count'), course_episode_count)
+        course_episode = response.data.get('results')[0]
+        self.assertEqual(course_episode.get('title'), 'introduction')
+        self.assertEqual(course_episode.get('duration'), '02:05:01')
 
     def test_get_list_episodes_of_a_course_by_admin_success(self):
         with open('course/tests/files/sample.mp4', 'rb') as f:
@@ -159,6 +162,9 @@ class CourseEpisodeTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         course_episode_count = CourseEpisode.objects.count()
         self.assertEqual(response.data.get('count'), course_episode_count)
+        course_episode = response.data.get('results')[0]
+        self.assertEqual(course_episode.get('title'), 'introduction')
+        self.assertEqual(course_episode.get('duration'), '02:05:01')
 
 
 
