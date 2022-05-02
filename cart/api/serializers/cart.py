@@ -1,6 +1,4 @@
 from django.shortcuts import get_object_or_404
-from khayyam import JalaliDatetime
-from pytz import timezone
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
@@ -9,6 +7,7 @@ from cart.api.serializers.order_items import OrderItemSerializer
 from cart.models import OrderItem
 from cart.models.cart import Cart
 from course.models import Course
+from utils.func import PersianDateTime
 
 
 class CartSerializer(ModelSerializer):
@@ -17,10 +16,7 @@ class CartSerializer(ModelSerializer):
     created = SerializerMethodField()
 
     def get_created(self, obj):
-        date = JalaliDatetime(
-            obj.created.astimezone(tz=timezone('Asia/Tehran'))
-        )
-        return str(date)
+        return PersianDateTime(obj.created)
 
     class Meta:
         model = Cart

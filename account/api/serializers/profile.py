@@ -1,10 +1,9 @@
 from django.contrib.auth import get_user_model
-from khayyam import JalaliDatetime
-from pytz import timezone
 from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
 from account.models.profile import Profile
+from utils.func import PersianDateTime
 
 User = get_user_model()
 
@@ -12,10 +11,7 @@ class ProfileSerializer(ModelSerializer):
     created = SerializerMethodField()
 
     def get_created(self, obj):
-        date = JalaliDatetime(
-            obj.created.astimezone(tz=timezone('Asia/Tehran'))
-        )
-        return str(date)
+        return PersianDateTime(obj.created)
 
     class Meta:
         model = Profile

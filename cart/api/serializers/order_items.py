@@ -1,9 +1,9 @@
+from django.contrib.auth import get_user_model
 from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
-from khayyam import JalaliDatetime
-from pytz import timezone
-from django.contrib.auth import get_user_model
+
 from cart.models import OrderItem
+from utils.func import PersianDateTime
 
 User = get_user_model()
 
@@ -14,10 +14,7 @@ class OrderItemSerializer(ModelSerializer):
     created = SerializerMethodField()
 
     def get_created(self, obj):
-        date = JalaliDatetime(
-            obj.created.astimezone(tz=timezone('Asia/Tehran'))
-        )
-        return str(date)
+        return PersianDateTime(obj.created)
 
     class Meta:
         model = OrderItem

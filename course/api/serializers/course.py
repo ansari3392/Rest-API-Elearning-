@@ -1,15 +1,11 @@
-import datetime
-import time
-
 from django.contrib.auth import get_user_model
-from khayyam import JalaliDatetime
-from pytz import timezone
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
 from categories.models import Category
 from course.api.serializers.couesrepisode import CourseEpisodeSerializer
+from utils.func import PersianDateTime
 
 User = get_user_model()
 
@@ -35,10 +31,7 @@ class CourseSerializer(ModelSerializer):
         return str(duration)
 
     def get_created(self, obj):
-        date = JalaliDatetime(
-            obj.created.astimezone(tz=timezone('Asia/Tehran'))
-        )
-        return str(date)
+        return PersianDateTime(obj.created)
 
     class Meta:
         model = Course

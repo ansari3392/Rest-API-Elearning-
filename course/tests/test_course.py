@@ -98,6 +98,24 @@ class CourseTest(APITestCase):
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
+    def test_get_a_course_detail_success(self):
+        self.client.logout()
+        course: Course = Course.objects.create(title="testing", description="testing again", teacher=self.user2,
+                                               category=self.cat1, )
+        course.tags.set([self.tag2, self.tag1])
+        url = reverse('course:api:course-detail',  kwargs={'pk': course.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get('title'), course.title)
+        self.assertEqual(response.data.get('sku'), course.sku)
+        self.assertEqual(response.data.get('is_free'), course.is_free)
+        self.assertEqual(response.data.get('price'), course.price)
+        self.assertEqual(response.data.get('published_date'), course.published_date)
+        self.assertEqual(response.data.get('description'), course.description)
+        self.assertEqual(response.data.get('teacher'), course.teacher.id)
+        self.assertEqual(response.data.get('category'), course.category.title)
+        self.assertEqual(len(response.data.get('episodes')), course.episodes.count())
+
     def test_get_list_of_courses(self):
         course1: Course = Course.objects.create(title="testing", description="testing again", teacher=self.user2,
                                                 category=self.cat1, )
@@ -110,6 +128,12 @@ class CourseTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get('count'), course_count)
         course = response.data.get('results')[0]
-        self.assertIn('sku', course)
-        self.assertEqual(course.get('title'), 'testing')
-        self.assertEqual(course.get('teacher'), self.user2.id)
+        self.assertEqual(course.get('title'), course1.title)
+        self.assertEqual(course.get('sku'), course1.sku)
+        self.assertEqual(course.get('is_free'), course1.is_free)
+        self.assertEqual(course.get('price'), course1.price)
+        self.assertEqual(course.get('published_date'), course1.published_date)
+        self.assertEqual(course.get('description'), course1.description)
+        self.assertEqual(course.get('teacher'), course1.teacher.id)
+        self.assertEqual(course.get('category'), course1.category.title)
+        self.assertEqual(len(course.get('episodes')), course1.episodes.count())

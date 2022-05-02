@@ -1,9 +1,8 @@
-from khayyam import JalaliDatetime
-from pytz import timezone
 from rest_framework import serializers
 
 from Blog.models import Article
 from comment.models.comment import Comment
+from utils.func import PersianDateTime
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -15,10 +14,7 @@ class CommentSerializer(serializers.ModelSerializer):
     created = serializers.SerializerMethodField()
 
     def get_created(self, obj):
-        date = JalaliDatetime(
-            obj.created.astimezone(tz=timezone('Asia/Tehran'))
-        )
-        return str(date)
+        return PersianDateTime(obj.created)
 
     @staticmethod
     def get_author(comment):

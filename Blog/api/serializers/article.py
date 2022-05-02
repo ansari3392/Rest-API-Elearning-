@@ -1,9 +1,8 @@
 from django.contrib.auth import get_user_model
-from khayyam import JalaliDatetime
-from pytz import timezone
 from rest_framework import serializers
 
 from Blog.models.article import Article
+from utils.func import PersianDateTime
 
 User = get_user_model()
 
@@ -18,10 +17,7 @@ class ArticleSerializer(serializers.ModelSerializer):
         return obj.tags.values_list('name', flat=True)
 
     def get_created(self, obj):
-        date = JalaliDatetime(
-            obj.created.astimezone(tz=timezone('Asia/Tehran'))
-        )
-        return str(date)
+        return PersianDateTime(obj.created)
 
     @staticmethod
     def get_author(article):
