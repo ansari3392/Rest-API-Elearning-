@@ -1,10 +1,12 @@
-from rest_framework import serializers
-from rest_framework.serializers import ModelSerializer
+import datetime
+import time
+
 from django.contrib.auth import get_user_model
+from rest_framework import serializers
+from rest_framework.fields import SerializerMethodField
+from rest_framework.serializers import ModelSerializer
 
 from categories.models import Category
-from cms.api.serializers.tag import TagSerializer
-from cms.models import Tag
 from course.api.serializers.couesrepisode import CourseEpisodeSerializer
 
 User = get_user_model()
@@ -13,16 +15,20 @@ from course.models import Course
 
 
 class CourseSerializer(ModelSerializer):
-    qs = Course.objects.prefetch_related('episodes')
     tags = serializers.SerializerMethodField()
     category = serializers.SlugRelatedField(
         slug_field='slug',
         queryset=Category.objects.all()
     )
     episodes = CourseEpisodeSerializer(many=True)
+    total_duration = SerializerMethodField()
 
     def get_tags(self, obj):
         return obj.tags.values_list('name', flat=True)
+
+    def get_total_duration(self, obj):
+        duration = obj.total_duration
+        return str(duration)
 
     class Meta:
         model = Course
@@ -42,7 +48,8 @@ class CourseSerializer(ModelSerializer):
             'pre_sale',
             'published_date',
             'tags',
-            'episodes'
+            'episodes',
+            'total_duration'
         ]
         read_only_fields = [
             'id',

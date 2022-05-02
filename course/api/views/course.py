@@ -1,3 +1,4 @@
+from django.db.models import OuterRef, ExpressionWrapper, Sum, Subquery
 from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import ModelViewSet
 
@@ -13,7 +14,9 @@ class CourseView(ModelViewSet):
         return [IsAdminUser()]
 
     def get_queryset(self):
-        queryset = Course.objects.all().prefetch_related('episodes')
+        queryset = Course.objects.all().annotate(
+            total_duration=Sum('episodes__duration')
+        ).prefetch_related('episodes')
         return queryset
 
     def get_serializer_class(self):
