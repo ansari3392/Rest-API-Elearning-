@@ -1,4 +1,6 @@
 from django.contrib.auth import get_user_model
+from khayyam import JalaliDatetime
+from pytz import timezone
 from rest_framework import serializers
 
 from Blog.models.article import Article
@@ -9,10 +11,17 @@ class ArticleSerializer(serializers.ModelSerializer):
     tag_list = serializers.ListField(required=False, write_only=True)
     tags = serializers.SerializerMethodField()
     author = serializers.SerializerMethodField()
+    created = serializers.SerializerMethodField()
 
     @staticmethod
     def get_tags(obj):
         return obj.tags.values_list('name', flat=True)
+
+    def get_created(self, obj):
+        date = JalaliDatetime(
+            obj.created.astimezone(tz=timezone('Asia/Tehran'))
+        )
+        return str(date)
 
     @staticmethod
     def get_author(article):
@@ -33,7 +42,8 @@ class ArticleSerializer(serializers.ModelSerializer):
             # 'category',
             'viewed',
             'tags',
-            'tag_list'
+            'tag_list',
+            'created'
         )
         read_only_fields = (
             'sku',

@@ -1,5 +1,7 @@
 from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
+from khayyam import JalaliDatetime
+from pytz import timezone
 from django.contrib.auth import get_user_model
 from cart.models import OrderItem
 
@@ -9,6 +11,13 @@ User = get_user_model()
 class OrderItemSerializer(ModelSerializer):
     course_title = SerializerMethodField()
     live_price = SerializerMethodField()
+    created = SerializerMethodField()
+
+    def get_created(self, obj):
+        date = JalaliDatetime(
+            obj.created.astimezone(tz=timezone('Asia/Tehran'))
+        )
+        return str(date)
 
     class Meta:
         model = OrderItem

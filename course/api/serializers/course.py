@@ -2,6 +2,8 @@ import datetime
 import time
 
 from django.contrib.auth import get_user_model
+from khayyam import JalaliDatetime
+from pytz import timezone
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
@@ -20,8 +22,10 @@ class CourseSerializer(ModelSerializer):
         slug_field='slug',
         queryset=Category.objects.all()
     )
+
     episodes = CourseEpisodeSerializer(many=True)
     total_duration = SerializerMethodField()
+    created = serializers.SerializerMethodField()
 
     def get_tags(self, obj):
         return obj.tags.values_list('name', flat=True)
@@ -29,6 +33,12 @@ class CourseSerializer(ModelSerializer):
     def get_total_duration(self, obj):
         duration = obj.total_duration
         return str(duration)
+
+    def get_created(self, obj):
+        date = JalaliDatetime(
+            obj.created.astimezone(tz=timezone('Asia/Tehran'))
+        )
+        return str(date)
 
     class Meta:
         model = Course
@@ -49,7 +59,8 @@ class CourseSerializer(ModelSerializer):
             'published_date',
             'tags',
             'episodes',
-            'total_duration'
+            'total_duration',
+            'created'
         ]
         read_only_fields = [
             'id',

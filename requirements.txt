@@ -45,3 +45,5 @@ virtualenv==20.10.0
 virtualenv-clone==0.5.7
 wcwidth==0.2.5
 wrapt==1.14.0
+
+Khayyam~=3.0.17

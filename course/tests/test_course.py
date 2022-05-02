@@ -111,5 +111,5 @@ class CourseTest(APITestCase):
         self.assertEqual(response.data.get('count'), course_count)
         course = response.data.get('results')[0]
         self.assertIn('sku', course)
-        self.assertEqual(course.get('title'), 'testing2')
+        self.assertEqual(course.get('title'), 'testing')
         self.assertEqual(course.get('teacher'), self.user2.id)
