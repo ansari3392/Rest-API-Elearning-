@@ -17,19 +17,12 @@ class ListCommentView(ListAPIView):
     #     return context
 
     def get_queryset(self):
-        user = self.request.user
         article_sku = self.request.query_params.get('article_sku')
         if article_sku:
-            if user.is_superuser:
-                queryset = Comment.objects.filter(article__sku=article_sku)
-            else:
-                queryset = Comment.objects.filter(is_active=True, is_private=False)
-                queryset = queryset.filter(article__sku=article_sku)
+            queryset = Comment.objects.filter(is_active=True, is_private=False)
+            queryset = queryset.filter(article__sku=article_sku)
         else:
-            if user.is_superuser:
-                queryset = Comment.objects.all()
-            else:
-                raise ValidationError({'status': status.HTTP_400_BAD_REQUEST})
+            raise ValidationError({'status': status.HTTP_400_BAD_REQUEST})
         return queryset
 
 

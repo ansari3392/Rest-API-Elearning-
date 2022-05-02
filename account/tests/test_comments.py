@@ -137,19 +137,5 @@ class CommentViewTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get('count'), 0)
 
-    def test_get_all_comments_by_admin_success(self):
-        self.client.logout()
-        self.user = create_admin('09224282997')
-        refresh = RefreshToken.for_user(user=self.user)
-        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
-        Comment.objects.create(article=self.article1, description='like', author=self.user2, is_active=True,
-                               is_private=False)
-        Comment.objects.create(article=self.article1, description='likee', author=self.user1, is_active=True,
-                               is_private=False)
-        url = reverse('comment:api:comment_list')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data.get('count'), 2)
-        comment = response.data.get('results')[0]
-        self.assertEqual(comment.get('description'), 'likee')
+
 
