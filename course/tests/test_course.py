@@ -11,6 +11,7 @@ from course.tests.service import create_admin, create_teacher
 
 User = get_user_model()
 
+
 class CourseTest(APITestCase):
     def setUp(self):
         self.user = create_admin('09224282994')
@@ -79,7 +80,7 @@ class CourseTest(APITestCase):
         course: Course = Course.objects.create(title="testing", description="testing again", teacher=self.user2,
                                                category=self.cat1, )
         course.tags.set([self.tag2, self.tag1])
-        url = reverse('course:api:course-detail',  kwargs={'pk': course.pk})
+        url = reverse('course:api:course-detail', kwargs={'pk': course.pk})
         data = {
             "title": "testing2",
 
@@ -93,7 +94,7 @@ class CourseTest(APITestCase):
         course: Course = Course.objects.create(title="testing", description="testing again", teacher=self.user2,
                                                category=self.cat1, )
         course.tags.set([self.tag2, self.tag1])
-        url = reverse('course:api:course-detail',  kwargs={'pk': course.pk})
+        url = reverse('course:api:course-detail', kwargs={'pk': course.pk})
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
@@ -103,16 +104,8 @@ class CourseTest(APITestCase):
         course2: Course = Course.objects.create(title="testing2", description="testing again", teacher=self.user2,
                                                 category=self.cat1, )
         course1.tags.set([self.tag2, self.tag1])
-        url = reverse('course:api:course-list',)
+        url = reverse('course:api:course-list', )
         response = self.client.get(url)
         course_count = Course.objects.all().count()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get('count'), course_count)
-
-
-
-
-
-
-
-
