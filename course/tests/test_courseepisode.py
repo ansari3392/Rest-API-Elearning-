@@ -28,7 +28,7 @@ class CourseEpisodeTest(APITestCase):
         self.course: Course = Course.objects.create(title="testing", description="testing again", teacher=self.user2,
                                                     category=self.cat1, )
 
-    def test_create_course_episode_by_admin(self):
+    def test_create_course_episode_by_admin_success(self):
         url = reverse('course:api:course-episode-list')
         with open('course/tests/files/sample.mp4', 'rb') as f:
             file = SimpleUploadedFile('Name of the django file', f.read())
@@ -42,8 +42,11 @@ class CourseEpisodeTest(APITestCase):
         }
         response = self.client.post(url, data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data.get('course'), self.course.sku)
+        self.assertEqual(response.data.get('title'), 'introduction')
+        self.assertEqual(response.data.get('duration'), '02:05:01')
 
-    def test_create_course_episode_by_non_admin(self):
+    def test_create_course_episode_by_non_admin_fail(self):
         self.client.logout()
         refresh = RefreshToken.for_user(user=self.user2)
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
@@ -61,7 +64,7 @@ class CourseEpisodeTest(APITestCase):
         response = self.client.post(url, data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_update_course_episode_by_admin(self):
+    def test_update_course_episode_by_admin_success(self):
         with open('course/tests/files/sample.mp4', 'rb') as f:
             file = SimpleUploadedFile('Name of the django file', f.read())
         course_episode: CourseEpisode = CourseEpisode.objects.create(course=self.course, number=1,
@@ -75,8 +78,10 @@ class CourseEpisodeTest(APITestCase):
         response = self.client.patch(url, data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get('title'), "introduction1")
+        self.assertEqual(response.data.get('course'), course_episode.course.sku)
+        self.assertEqual(response.data.get('duration'), course_episode.duration)
 
-    def test_update_course_episode_by_non_admin(self):
+    def test_update_course_episode_by_non_admin_fail(self):
         self.client.logout()
         refresh = RefreshToken.for_user(user=self.user2)
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
@@ -92,7 +97,7 @@ class CourseEpisodeTest(APITestCase):
         response = self.client.patch(url, data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_destroy_course_episode_by_admin(self):
+    def test_destroy_course_episode_by_admin_success(self):
         with open('course/tests/files/sample.mp4', 'rb') as f:
             file = SimpleUploadedFile('Name of the django file', f.read())
         course_episode: CourseEpisode = CourseEpisode.objects.create(course=self.course, number=1,
@@ -102,7 +107,7 @@ class CourseEpisodeTest(APITestCase):
         response = self.client.delete(url, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-    def test_destroy_course_episode_by_non_admin(self):
+    def test_destroy_course_episode_by_non_admin_fail(self):
         self.client.logout()
         refresh = RefreshToken.for_user(user=self.user2)
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')

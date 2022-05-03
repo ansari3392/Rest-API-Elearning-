@@ -10,6 +10,28 @@ User = get_user_model()
 
 class OrderItemSerializer(ModelSerializer):
     course_title = SerializerMethodField()
+    created = SerializerMethodField()
+
+    def get_created(self, obj):
+        return PersianDateTime(obj.created)
+
+    class Meta:
+        model = OrderItem
+        fields = (
+            'id',
+            'sku',
+            'course_title',
+            'price',
+            'created'
+        )
+        read_only_fields = ('sku', )
+
+    def get_course_title(self, obj):
+        return obj.course.title if obj.course.title else ''
+
+
+class CartOrderItemSerializer(ModelSerializer):
+    course_title = SerializerMethodField()
     live_price = SerializerMethodField()
     created = SerializerMethodField()
 
@@ -22,7 +44,8 @@ class OrderItemSerializer(ModelSerializer):
             'id',
             'sku',
             'course_title',
-            'live_price'
+            'live_price',
+            'created'
         )
         read_only_fields = ('sku', )
 

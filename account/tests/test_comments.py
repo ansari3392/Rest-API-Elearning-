@@ -57,14 +57,18 @@ class CommentViewTestCase(APITestCase):
         self.assertFalse(comment.is_active)
 
     def test_get_my_comment_list_success(self):
-        Comment.objects.create(article=self.article1, description='like', author=self.user2)
+        comment = Comment.objects.create(article=self.article1, description='like', author=self.user2)
         url = reverse('account:api:my_comments')
         response = self.client.get(url)
         comment_count = Comment.objects.filter(author=self.user2).count()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get('count'), comment_count)
-        comment = response.data.get('results')[0]
-        self.assertIn('sku', comment)
+        comment1 = response.data.get('results')[0]
+        self.assertEqual(comment1.get('description'), comment.description)
+        self.assertEqual(comment1.get('article'), comment.article.sku)
+        self.assertEqual(comment1.get('is_active'), comment.is_active)
+        self.assertEqual(comment1.get('is_private'), comment.is_private)
+        self.assertEqual(comment1.get('id'), comment.id)
 
     def test_update_comment_success(self):
         Comment.objects.create(article=self.article1, description='like', author=self.user2, is_active=False)
@@ -120,14 +124,17 @@ class CommentViewTestCase(APITestCase):
 
     def test_get_all_active_comment_of_an_article_by_user_success(self):
         self.client.logout()
-        Comment.objects.create(article=self.article1, description='like', author=self.user2, is_active=True)
+        comment = Comment.objects.create(article=self.article1, description='like', author=self.user2, is_active=True)
+        comment2 = Comment.objects.create(article=self.article1, description='big like', author=self.user2, is_active=False)
         url = reverse_querystring('comment:api:comment_list', query_kwargs={'article_sku': self.article1.sku})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get('count'), 1)
         self.assertEqual(response.data.get('count'), 1)
-        comment = response.data.get('results')[0]
-        self.assertEqual(comment.get('description'), 'like')
+        comment1 = response.data.get('results')[0]
+        self.assertEqual(comment1.get('is_active'), comment.is_active)
+        self.assertEqual(comment1.get('article'), comment.article.sku)
+        self.assertEqual(comment1.get('description'), comment.description)
 
     def test_get_all_inactive_comment_of_an_article_by_user_fail(self):
         self.client.logout()

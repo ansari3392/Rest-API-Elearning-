@@ -23,7 +23,7 @@ class CourseTest(APITestCase):
         self.tag1 = Tag.objects.create(name="coding")
         self.tag2 = Tag.objects.create(name="learning")
 
-    def test_create_course_by_admin_without_cat(self):
+    def test_create_course_by_admin_without_cat_success(self):
         url = reverse('course:api:course-list')
         data = {
             "title": "testing",
@@ -33,8 +33,12 @@ class CourseTest(APITestCase):
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data.get('title'), 'testing')
+        self.assertEqual(response.data.get('description'), 'testing')
+        self.assertEqual(response.data.get('teacher'), 'mahtab')
+        self.assertEqual(response.data.get('category'), None)
+        self.assertFalse(response.data.get('is_free'))
 
-    def test_create_course_by_admin_with_cat(self):
+    def test_create_course_by_admin_with_cat_success(self):
         url = reverse('course:api:course-list')
         data = {
             "title": "testing",
@@ -47,7 +51,7 @@ class CourseTest(APITestCase):
         self.assertEqual(response.data.get('title'), 'testing')
         self.assertEqual(response.data.get('category'), 'programming')
 
-    def test_create_course_by_admin_with_tag(self):
+    def test_create_course_by_admin_with_tag_success(self):
         url = reverse('course:api:course-list')
         data = {
             "title": "testing",
@@ -61,7 +65,7 @@ class CourseTest(APITestCase):
         self.assertEqual(response.data.get('title'), 'testing')
         self.assertEqual(len(response.data.get('tags')), 1)
 
-    def test_create_course_by_non_admin(self):
+    def test_create_course_by_non_admin_fail(self):
         self.client.logout()
         refresh = RefreshToken.for_user(user=self.user2)
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
@@ -76,7 +80,7 @@ class CourseTest(APITestCase):
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_update_course_by_admin(self):
+    def test_update_course_by_admin_success(self):
         course: Course = Course.objects.create(title="testing", description="testing again", teacher=self.user2,
                                                category=self.cat1, )
         course.tags.set([self.tag2, self.tag1])
@@ -88,9 +92,12 @@ class CourseTest(APITestCase):
         response = self.client.patch(url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get("title"), "testing2")
+        self.assertEqual(response.data.get("description"), course.description)
+        self.assertEqual(response.data.get("id"), course.id)
+        self.assertEqual(response.data.get("category"), course.category.title)
         self.assertEqual(len(response.data.get("tags")), 2)
 
-    def test_remove_course_by_admin(self):
+    def test_remove_course_by_admin_success(self):
         course: Course = Course.objects.create(title="testing", description="testing again", teacher=self.user2,
                                                category=self.cat1, )
         course.tags.set([self.tag2, self.tag1])
@@ -98,7 +105,7 @@ class CourseTest(APITestCase):
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-    def test_get_a_course_detail_success(self):
+    def test_get_a_course_detail_success_success(self):
         self.client.logout()
         course: Course = Course.objects.create(title="testing", description="testing again", teacher=self.user2,
                                                category=self.cat1, )
@@ -116,7 +123,7 @@ class CourseTest(APITestCase):
         self.assertEqual(response.data.get('category'), course.category.title)
         self.assertEqual(len(response.data.get('episodes')), course.episodes.count())
 
-    def test_get_list_of_courses(self):
+    def test_get_list_of_courses_success(self):
         course1: Course = Course.objects.create(title="testing", description="testing again", teacher=self.user2,
                                                 category=self.cat1, )
         course2: Course = Course.objects.create(title="testing2", description="testing again", teacher=self.user2,

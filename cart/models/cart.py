@@ -6,9 +6,11 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+
 class OrderManager(models.Manager):
     def get_queryset(self):
         return super(OrderManager, self).get_queryset().exclude(step='initial')
+
 
 class Cart(SkuMixin, TimeStampModelMixin):
     user = models.ForeignKey(

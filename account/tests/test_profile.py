@@ -20,9 +20,16 @@ class UserViewTestCase(APITestCase):
         # self.token = Token.objects.create(user=self.user)
         # self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
 
-    def test_get_profile_authenticated_success(self):
+    def test_get_my_profile_authenticated_success(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get('phone_number'), self.user.phone_number)
+        self.assertEqual(response.data.get('first_name'), self.user.first_name)
+        self.assertEqual(response.data.get('last_name'), self.user.last_name)
+        self.assertEqual(response.data.get('profile').get('gender'), self.user.profile.gender)
+        self.assertEqual(response.data.get('profile').get('bio'), self.user.profile.bio)
+        self.assertEqual(response.data.get('profile').get('is_consultant'), self.user.profile.is_consultant)
+        self.assertEqual(response.data.get('profile').get('is_teacher'), self.user.profile.is_teacher)
 
     def test_profile_unauthenticated_fail(self):
         self.client.logout()
@@ -43,7 +50,10 @@ class UserViewTestCase(APITestCase):
             }
         response = self.client.patch(self.url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data.get('first_name'), 'fati', )
-        self.assertEqual(response.data.get('last_name'), 'ansari', )
-        self.assertEqual(response.data.get('email'), 'mehri@gmail.com', )
-        self.assertEqual(response.data.get('profile').get('gender'), 'female', )
+        self.assertEqual(response.data.get('first_name'), 'fati')
+        self.assertEqual(response.data.get('last_name'), 'ansari')
+        self.assertEqual(response.data.get('email'), 'mehri@gmail.com')
+        self.assertEqual(response.data.get('profile').get('gender'), 'female')
+        self.assertFalse(response.data.get('profile').get('is_teacher'))
+        self.assertEqual(response.data.get('id'), self.user.id)
+        self.assertEqual(response.data.get('profile').get('sku'), self.user.profile.sku)

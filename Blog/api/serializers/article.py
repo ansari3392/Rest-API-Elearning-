@@ -44,7 +44,6 @@ class ArticleSerializer(serializers.ModelSerializer):
         read_only_fields = (
             'sku',
             'slug',
-            'is_published',
             'viewed',
         )
 

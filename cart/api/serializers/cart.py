@@ -3,7 +3,7 @@ from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
-from cart.api.serializers.order_items import OrderItemSerializer
+from cart.api.serializers.order_items import OrderItemSerializer, CartOrderItemSerializer
 from cart.models import OrderItem
 from cart.models.cart import Cart
 from course.models import Course
@@ -11,7 +11,7 @@ from utils.func import PersianDateTime
 
 
 class CartSerializer(ModelSerializer):
-    orderitems = OrderItemSerializer(many=True)
+    orderitems = CartOrderItemSerializer(many=True)
     total_price = SerializerMethodField()
     created = SerializerMethodField()
 
@@ -27,8 +27,8 @@ class CartSerializer(ModelSerializer):
             'created',
             'description',
             'orderitems',
-            'total'
-            '_price'
+            'total_price'
+
         )
         read_only_fields = ('sku',)
 
@@ -46,7 +46,7 @@ class AddToCartSerializer(ModelSerializer):
     class Meta:
         model = Cart
         fields = [
-           'course'
+            'course'
         ]
 
 
@@ -60,9 +60,6 @@ class RemoveFromCartSerializer(ModelSerializer):
     def validate_order_item(self, sku):
         order_item = get_object_or_404(OrderItem, sku=sku, cart_id=self.cart.id)  # user should send sku of orderitem
         return order_item
-
-
-
 
     class Meta:
         model = Cart
@@ -91,6 +88,31 @@ class OrderListSerializer(ModelSerializer):
 
     def get_full_name(self, obj):
         return obj.user.get_full_name() if obj.user.get_full_name() else ''
+
+    def get_total_price(self, obj):
+        return obj.total_price
+
+class OrderDetailSerializer(ModelSerializer):
+    orderitems = OrderItemSerializer(many=True)
+    total_price = SerializerMethodField()
+    created = SerializerMethodField()
+
+    def get_created(self, obj):
+        return PersianDateTime(obj.created)
+
+    class Meta:
+        model = Cart
+        fields = (
+            'id',
+            'sku',
+            'step',
+            'created',
+            'description',
+            'orderitems',
+            'total_price'
+
+        )
+        read_only_fields = ('sku',)
 
     def get_total_price(self, obj):
         return obj.total_price
