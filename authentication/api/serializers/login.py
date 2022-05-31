@@ -8,10 +8,12 @@ class LoginSerializer(serializers.Serializer):
     email = serializers.CharField(write_only=True, allow_blank=True)
 
     def validate(self, attrs):
-        if attrs['phone_number'] and attrs['email']:
-            raise serializers.ValidationError({"error": "you only can send email or phone number"})
-        elif not attrs['phone_number'] and not attrs['email']:
-            raise serializers.ValidationError({"error": "you must send email or phone number"})
+        email = attrs.get('email')
+        phone = attrs.get('phone_number')
+        if all([email, phone]):
+            raise serializers.ValidationError('you cant send both email and phone number')
+        if not any([email, phone]):
+            raise serializers.ValidationError('you should send email or phone number')
         return attrs
 
 
